@@ -13,6 +13,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,13 +79,15 @@ public class MyWebSocketClient extends WebSocketClient implements Disposable {
             if (isStartPrint) {
                 int start = s.indexOf('#');
                 if (start != -1) {
-                    try {
-                        int lineNumber = Integer.parseInt(s.substring(start + 1)) - 1;
-                        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNumber, 10, new TextAttributes(null, JBColor.YELLOW, null, null, 0));
-                        highlighters.add(highlighter);
-                    } catch (NumberFormatException e) {
-                        logger.info("parse trace error with str={}", s);
-                    }
+                    EventQueue.invokeLater(() -> {
+                        try {
+                            int lineNumber = Integer.parseInt(s.substring(start + 1)) - 1;
+                            RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNumber, 10, new TextAttributes(null, JBColor.YELLOW, null, null, 0));
+                            highlighters.add(highlighter);
+                        } catch (Exception e) {
+                            logger.info("parse trace error with str={}", s);
+                        }
+                    });
                 }
                 consoleView.print(s, ConsoleViewContentType.SYSTEM_OUTPUT);
             } else if (s.startsWith(START_WORD)) {
@@ -98,9 +101,11 @@ public class MyWebSocketClient extends WebSocketClient implements Disposable {
     public void onClose(int i, String s, boolean b) {
         logger.info(agentId + WEBSOCKET_CLOSE);
         consoleView.print(agentId + WEBSOCKET_CLOSE + ENTER, ConsoleViewContentType.SYSTEM_OUTPUT);
-        for (RangeHighlighter highlighter : highlighters) {
-            this.markupModel.removeHighlighter(highlighter);
-        }
+        EventQueue.invokeLater(() -> {
+            for (RangeHighlighter highlighter : highlighters) {
+                this.markupModel.removeHighlighter(highlighter);
+            }
+        });
     }
 
     @Override

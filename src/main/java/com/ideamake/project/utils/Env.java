@@ -15,9 +15,9 @@ import lombok.ToString;
 @AllArgsConstructor
 public enum Env {
 
-    TEST("https://填入你自己的域名哈/api/tunnelAgentInfo?app=%s", "wss://填入你自己的域名哈:7777/ws?method=connectArthas&id=%s&targetServer=%s"),
-    PRE("https://填入你自己的域名哈/api/tunnelAgentInfo?app=%s", "wss://填入你自己的域名哈:7777/ws?method=connectArthas&id=%s&targetServer=%s"),
-    PROD("https://填入你自己的域名哈/api/tunnelAgentInfo?app=%s", "wss://填入你自己的域名哈:7777/ws?method=connectArthas&id=%s&targetServer=%s"),
+    TEST("https://test-tunnel-server.ideamake.cn/api/tunnelAgentInfo?app=%s", "wss://test-tunnel-server.ideamake.cn:7777/ws?method=connectArthas&id=%s&targetServer=%s"),
+    PRE("https://tunnel-server.ideamake.cn/api/tunnelAgentInfo?app=%s", "wss://tunnel-server.ideamake.cn:7777/ws?method=connectArthas&id=%s&targetServer=%s"),
+    PROD("https://tunnel-server.ideamake.cn/api/tunnelAgentInfo?app=%s", "wss://tunnel-server.ideamake.cn:7777/ws?method=connectArthas&id=%s&targetServer=%s"),
 
     ;
 
