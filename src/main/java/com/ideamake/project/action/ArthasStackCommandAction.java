@@ -1,6 +1,8 @@
 package com.ideamake.project.action;
 
 import com.ideamake.project.common.command.CommandContext;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.ideamake.project.common.enums.ShellScriptCommandEnum;
@@ -21,10 +23,10 @@ public class ArthasStackCommandAction extends BaseArthasPluginAction {
     }
 
     @Override
-    public void doCommand(String className, String methodName, Project project, PsiElement psiElement) {
+    public void doCommand(String className, String methodName, Project project, PsiElement psiElement, Editor editor) {
         CommandContext commandContext = new CommandContext(project, psiElement);
         String command = ShellScriptCommandEnum.STACK.getArthasCommand(commandContext);
-        new ArthasOptionsDialog(project, command).open();
+        new ArthasOptionsDialog(project, command, editor).open();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ideamake.project.action;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.ideamake.project.common.command.CommandContext;
@@ -19,7 +20,7 @@ public class ArthasWatchCommandAction extends BaseArthasPluginAction {
     }
 
     @Override
-    public void doCommand(String className, String methodName, Project project, PsiElement psiElement) {
+    public void doCommand(String className, String methodName, Project project, PsiElement psiElement, Editor editor) {
         CommandContext commandContext = new CommandContext(project, psiElement);
         ShellScriptCommandEnum scriptCommandEnum = ShellScriptCommandEnum.WATCH;
         //这里针对放置在字段上获取字段的值的信息进行处理增强
@@ -34,6 +35,6 @@ public class ArthasWatchCommandAction extends BaseArthasPluginAction {
         }
         String command = scriptCommandEnum.getArthasCommand(commandContext);
 
-        new ArthasOptionsDialog(project, command).open();
+        new ArthasOptionsDialog(project, command, editor).open();
     }
 }

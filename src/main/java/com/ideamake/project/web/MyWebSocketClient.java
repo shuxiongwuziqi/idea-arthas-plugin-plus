@@ -3,12 +3,19 @@ package com.ideamake.project.web;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.MarkupModel;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.ui.JBColor;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -39,11 +46,18 @@ public class MyWebSocketClient extends WebSocketClient implements Disposable {
 
     private boolean isStartPrint;
 
-    public MyWebSocketClient(URI serverUri, String agentId, String msg) {
+    private MarkupModel markupModel;
+
+    private List<RangeHighlighter> highlighters;
+
+
+    public MyWebSocketClient(URI serverUri, String agentId, String msg, Editor editor) {
         super(serverUri);
         this.agentId = agentId;
         this.msg = msg;
         this.isStartPrint = false;
+        this.markupModel = editor.getMarkupModel();
+        this.highlighters = new ArrayList<>();
     }
 
     @Override
@@ -62,6 +76,16 @@ public class MyWebSocketClient extends WebSocketClient implements Disposable {
     public void onMessage(String s) {
         if (Objects.nonNull(s)) {
             if (isStartPrint) {
+                int start = s.indexOf('#');
+                if (start != -1) {
+                    try {
+                        int lineNumber = Integer.parseInt(s.substring(start + 1)) - 1;
+                        RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNumber, 10, new TextAttributes(null, JBColor.YELLOW, null, null, 0));
+                        highlighters.add(highlighter);
+                    } catch (NumberFormatException e) {
+                        logger.info("parse trace error with str={}", s);
+                    }
+                }
                 consoleView.print(s, ConsoleViewContentType.SYSTEM_OUTPUT);
             } else if (s.startsWith(START_WORD)) {
                 consoleView.print(agentId + LISTENING_STR, ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -74,6 +98,9 @@ public class MyWebSocketClient extends WebSocketClient implements Disposable {
     public void onClose(int i, String s, boolean b) {
         logger.info(agentId + WEBSOCKET_CLOSE);
         consoleView.print(agentId + WEBSOCKET_CLOSE + ENTER, ConsoleViewContentType.SYSTEM_OUTPUT);
+        for (RangeHighlighter highlighter : highlighters) {
+            this.markupModel.removeHighlighter(highlighter);
+        }
     }
 
     @Override

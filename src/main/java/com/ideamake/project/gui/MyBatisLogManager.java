@@ -25,6 +25,7 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -83,10 +84,13 @@ public class MyBatisLogManager implements Disposable {
 
     private final Env env;
 
-    private MyBatisLogManager(@NotNull Project project, List<AgentInfo> agentInfos, String cmd, Env env) {
+    private Editor editor;
+
+    private MyBatisLogManager(@NotNull Project project, List<AgentInfo> agentInfos, String cmd, Env env, Editor editor) {
         this.agentInfos = agentInfos;
         this.cmd = cmd;
         this.env = env;
+        this.editor = editor;
 
         this.project = project;
 
@@ -114,6 +118,7 @@ public class MyBatisLogManager implements Disposable {
         Disposer.register(this, layoutUi.getContentManager());
         Disposer.register(this, messageBusConnection);
 
+
         messageBusConnection.subscribe(ToolWindowManagerListener.TOPIC, new ToolWindowManagerListener() {
             @Override
             public void toolWindowRegistered(@NotNull String id) {
@@ -134,12 +139,12 @@ public class MyBatisLogManager implements Disposable {
         getToolWindow().activate(null);
 
 
-        this.webSocketClients = createWebSocketClients(agentInfos, cmd, env);
+        this.webSocketClients = createWebSocketClients(agentInfos, cmd, env, editor);
     }
 
-    private List<MyWebSocketClient> createWebSocketClients(List<AgentInfo> agentInfos, String cmd, Env env) {
+    private List<MyWebSocketClient> createWebSocketClients(List<AgentInfo> agentInfos, String cmd, Env env, Editor editor) {
         return agentInfos.stream().map(agentInfo ->
-                        createSocketConnection(cmd, agentInfo.getAgentId(), agentInfo.getClientConnectHost(), env))
+                        createSocketConnection(cmd, agentInfo.getAgentId(), agentInfo.getClientConnectHost(), env, editor))
                 .peek(client -> {
                     client.setConsoleView(consoleView);
                     Disposer.register(this, client);
@@ -147,7 +152,7 @@ public class MyBatisLogManager implements Disposable {
                 .collect(Collectors.toList());
     }
 
-    public static void run(Project project, String cmd, Env env, String artifactId, String moduleName) {
+    public static void run(Project project, String cmd, Env env, String artifactId, String moduleName, Editor editor) {
 
         List<AgentInfo> agentInfos = ProjectContextHolder.getAgentList(env, artifactId, moduleName);
 
@@ -158,16 +163,16 @@ public class MyBatisLogManager implements Disposable {
         if (CollectionUtils.isEmpty(agentInfos)) {
             NotifyUtils.notifyMessage(project, String.format("没有找到合适的agent, env: %s, module: %s, 建议修改或添加pom的<name>标签", env.name(), artifactId));
         } else {
-            MyBatisLogManager.createInstance(project, agentInfos, cmd, env).run();
+            MyBatisLogManager.createInstance(project, agentInfos, cmd, env, editor).run();
         }
     }
 
-    private static MyWebSocketClient createSocketConnection(String cmd, String agentId, String host, Env env) {
+    private static MyWebSocketClient createSocketConnection(String cmd, String agentId, String host, Env env, Editor editor) {
 
         String uri = env.getWsUrl(agentId, host);
         MyWebSocketClient client = null;
         try {
-            client = new MyWebSocketClient(new URI(uri), agentId, String.format(ACTION_MSG, cmd));
+            client = new MyWebSocketClient(new URI(uri), agentId, String.format(ACTION_MSG, cmd), editor);
         } catch (URISyntaxException ignored) {
         }
 
@@ -263,7 +268,7 @@ public class MyBatisLogManager implements Disposable {
             stop();
         }
         running = true;
-        this.webSocketClients = createWebSocketClients(this.agentInfos, this.cmd, this.env);
+        this.webSocketClients = createWebSocketClients(this.agentInfos, this.cmd, this.env, editor);
     }
 
     @Nullable
@@ -283,7 +288,8 @@ public class MyBatisLogManager implements Disposable {
     }
 
     @NotNull
-    public static MyBatisLogManager createInstance(@NotNull Project project, List<AgentInfo> agentInfos, String cmd, Env env) {
+    public static MyBatisLogManager createInstance(@NotNull Project project, List<AgentInfo> agentInfos, String cmd, Env env, Editor editor) {
+
 
         MyBatisLogManager manager = getInstance(project);
 
@@ -291,7 +297,7 @@ public class MyBatisLogManager implements Disposable {
             Disposer.dispose(manager);
         }
 
-        manager = new MyBatisLogManager(project, agentInfos, cmd, env);
+        manager = new MyBatisLogManager(project, agentInfos, cmd, env, editor);
         project.putUserData(KEY, manager);
 
         return manager;

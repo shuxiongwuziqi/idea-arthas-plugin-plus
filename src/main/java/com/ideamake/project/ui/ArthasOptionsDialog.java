@@ -50,7 +50,7 @@ public class ArthasOptionsDialog extends JDialog {
 
     private AppSettingsState setting;
 
-    public ArthasOptionsDialog(Project project, String command) {
+    public ArthasOptionsDialog(Project project, String command, Editor editor) {
         this.project = project;
         setContentPane(this.contentPane);
         setModal(false);
@@ -66,11 +66,11 @@ public class ArthasOptionsDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        init(project, command);
+        init(project, command, editor);
 
     }
 
-    private void init(Project project, String command) {
+    private void init(Project project, String command, Editor editor) {
         // 填充模块选择器
         List<Model> moduleList = new ArrayList<>(4);
         String currentArtifactId = getModuleList(project, moduleList);
@@ -107,7 +107,7 @@ public class ArthasOptionsDialog extends JDialog {
             String selectedArtifactId = (String) artifactSelect.getSelectedItem();
             String selectedModuleName = moduleList.stream().filter(module -> module.getArtifactId().equals(selectedArtifactId)).findFirst()
                     .map(Model::getName).orElse(null);
-            MyBatisLogManager.run(project, newCommend, env, selectedArtifactId, selectedModuleName);
+            MyBatisLogManager.run(project, newCommend, env, selectedArtifactId, selectedModuleName, editor);
             onCancel();
         });
     }
