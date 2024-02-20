@@ -58,7 +58,7 @@ public class MyApplicationConfigurable implements Configurable {
         if (Objects.nonNull(this.service.enableEffectColor)) {
             myConfig.getEffectCheckBox().setSelected(this.service.enableEffectColor);
         }
-        return myConfig.getContentPane();
+        return myConfig.getPanel();
     }
 
     @Override

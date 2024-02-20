@@ -13,20 +13,13 @@ import javax.swing.*;
  */
 @Data
 public class MyConfig {
-    private JPanel contentPane;
-    private JTabbedPane settingTabPane;
+    private JPanel panel;
+    private JTabbedPane tabbedPane1;
     private JCheckBox foregroundCheckBox;
-    private JComboBox effectStyle;
+    private ColorPanel foregroundColor;
     private JCheckBox backgroundCheckBox;
     private JCheckBox effectCheckBox;
-    private ColorPanel foregroundColor;
     private ColorPanel backgroundColor;
     private ColorPanel effectColor;
-
-    public MyConfig() {
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
+    private JComboBox effectStyle;
 }
