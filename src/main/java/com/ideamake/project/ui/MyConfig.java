@@ -22,4 +22,7 @@ public class MyConfig {
     private ColorPanel backgroundColor;
     private ColorPanel effectColor;
     private JComboBox effectStyle;
+    private JTextField testDomain;
+    private JTextField preDomain;
+    private JTextField prodDomain;
 }

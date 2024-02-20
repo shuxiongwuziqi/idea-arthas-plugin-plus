@@ -58,6 +58,21 @@ public class MyApplicationConfigurable implements Configurable {
         if (Objects.nonNull(this.service.enableEffectColor)) {
             myConfig.getEffectCheckBox().setSelected(this.service.enableEffectColor);
         }
+        if (Objects.nonNull(this.service.testDomain)) {
+            myConfig.getTestDomain().setText(this.service.testDomain);
+        } else {
+            myConfig.getTestDomain().setText("test-tunnel-server.ideamake.cn");
+        }
+        if (Objects.nonNull(this.service.prodDomain)) {
+            myConfig.getProdDomain().setText(this.service.prodDomain);
+        } else {
+            myConfig.getProdDomain().setText("tunnel-server.ideamake.cn");
+        }
+        if (Objects.nonNull(this.service.preDomain)) {
+            myConfig.getPreDomain().setText(this.service.preDomain);
+        } else {
+            myConfig.getPreDomain().setText("tunnel-server.ideamake.cn");
+        }
         return myConfig.getPanel();
     }
 
@@ -75,5 +90,8 @@ public class MyApplicationConfigurable implements Configurable {
         this.service.backgroundColor = Optional.ofNullable(this.myConfig.getBackgroundColor().getSelectedColor()).map(Color::getRGB).orElse(null);
         this.service.effectColor = Optional.ofNullable(this.myConfig.getEffectColor().getSelectedColor()).map(Color::getRGB).orElse(null);
         this.service.effectStyle = this.myConfig.getEffectStyle().getSelectedItem().toString();
+        this.service.testDomain = this.myConfig.getTestDomain().getText();
+        this.service.prodDomain = this.myConfig.getProdDomain().getText();
+        this.service.preDomain = this.myConfig.getPreDomain().getText();
     }
 }

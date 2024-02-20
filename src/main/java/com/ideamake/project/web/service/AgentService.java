@@ -11,9 +11,6 @@ import java.util.Map;
  * @date: 2023/8/9
  */
 public interface AgentService {
-    Map<String, AgentInfo> getAgentInfoForTest(String appName);
-
-    Map<String, AgentInfo> getAgentInfoForProd(String appName);
 
     Map<String, AgentInfo> getAgentInfoArtifactId(String appName, Env env);
 }

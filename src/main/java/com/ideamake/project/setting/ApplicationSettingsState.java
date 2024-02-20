@@ -13,6 +13,10 @@ import org.jetbrains.annotations.Nullable;
  * @date 2024/02/20
  * @description 描述信息
  */
+@State(
+        name = "arthas.idea.plugin.global",
+        storages = {@Storage("arthas-plus-setting.xml")}
+)
 public class ApplicationSettingsState implements PersistentStateComponent<ApplicationSettingsState> {
     @Override
     public @Nullable ApplicationSettingsState getState() {
@@ -32,4 +36,7 @@ public class ApplicationSettingsState implements PersistentStateComponent<Applic
     public Boolean enableEffectColor;
     public Integer effectColor;
     public String effectStyle;
+    public String testDomain;
+    public String preDomain;
+    public String prodDomain;
 }

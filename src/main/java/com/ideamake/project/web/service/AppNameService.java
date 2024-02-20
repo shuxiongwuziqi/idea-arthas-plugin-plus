@@ -10,17 +10,6 @@ import java.util.List;
  * @date: 2023/8/9
  */
 public interface AppNameService {
-    /**
-     * 获取测试环境应用列表
-     * @return 测试环境应用列表
-     */
-    List<String> getAppNamesForTest();
-
-    /**
-     * 获取正式环境应用列表
-     * @return 正式环境应用列表
-     */
-    List<String> getAppNamesForProd();
 
     /**
      * 根据环境获取应用列表
