@@ -172,7 +172,7 @@ public class MyBatisLogManager implements Disposable {
         String uri = env.getWsUrl(agentId, host);
         MyWebSocketClient client = null;
         try {
-            client = new MyWebSocketClient(new URI(uri), agentId, String.format(ACTION_MSG, cmd), editor);
+            client = new MyWebSocketClient(new URI(uri), agentId, String.format(ACTION_MSG, cmd.replace("\"","\\\"")), editor);
         } catch (URISyntaxException ignored) {
         }
 

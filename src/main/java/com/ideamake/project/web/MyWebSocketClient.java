@@ -1,9 +1,12 @@
 package com.ideamake.project.web;
 
+import com.ideamake.project.setting.ApplicationSettingsState;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -16,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -82,7 +86,9 @@ public class MyWebSocketClient extends WebSocketClient implements Disposable {
                     EventQueue.invokeLater(() -> {
                         try {
                             int lineNumber = Integer.parseInt(s.substring(start + 1)) - 1;
-                            RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNumber, 10, new TextAttributes(null, JBColor.YELLOW, null, null, 0));
+                            ApplicationSettingsState service = ServiceManager.getService(ApplicationSettingsState.class);
+                            EffectType type = Arrays.stream(EffectType.values()).filter(a -> a.name().equals(service.effectStyle)).findFirst().orElse(null);
+                            RangeHighlighter highlighter = markupModel.addLineHighlighter(lineNumber, 10, new TextAttributes(service.enableForegroundColor ? new Color(service.foregroundColor) : null, service.enableBackgroundColor ? new Color(service.backgroundColor) : null, service.enableEffectColor ? new Color(service.effectColor) : null, service.enableEffectColor ? type : null, 0));
                             highlighters.add(highlighter);
                         } catch (Exception e) {
                             logger.info("parse trace error with str={}", s);

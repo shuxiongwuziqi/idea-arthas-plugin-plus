@@ -38,7 +38,8 @@
 		<executor implementation="com.ideamake.project.gui.ArthasPlusExecutor"
                   id="ArthasPlusExecutor"/>
 		<projectService serviceImplementation="com.ideamake.project.setting.AppSettingsState"/>
-
+		<applicationService serviceImplementation="com.ideamake.project.setting.ApplicationSettingsState"/>
+		<applicationConfigurable instance="com.ideamake.project.ui.MyApplicationConfigurable"/>
 	</extensions>
 
 	<actions>
@@ -58,11 +59,23 @@
 				text="Trace"
 				description="Arthas trace">
         </action>
+
+		<action id="IdeamakeArthasSql" class="com.ideamake.project.action.SqlCommandAction"
+				text="SQL"
+				description="Arthas sql">
+		</action>
+
+		<action id="IdeamakeArthasKeywordSql" class="com.ideamake.project.action.SqlKeywordCommandAction"
+				text="SQL Keyword"
+				description="Arthas sql with keyword">
+		</action>
 		<group id="arthas-plugin-plus" popup="true" text="Arthas Command Plus">
 			<add-to-group group-id="EditorPopupMenu" anchor="before" relative-to-action="$Paste"/>
 			<reference ref="IdeamakeArthasStack"/>
 			<reference ref="IdeamakeArthasWatch"/>
             <reference ref="IdeamakeArthasTrace"/>
+            <reference ref="IdeamakeArthasSql"/>
+			<reference ref="IdeamakeArthasKeywordSql"/>
         </group>
 	</actions>
 </idea-plugin>
